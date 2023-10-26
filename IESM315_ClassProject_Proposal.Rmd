@@ -1,0 +1,132 @@
+---
+title: ""
+output:
+  pdf_document:
+    number_sections: TRUE
+geometry: "left = 3cm, right = 3cm, top = 3cm, bottom = 3cm"
+fontsize: 11pt
+header-includes:
+  - \usepackage{float}
+  - \usepackage{sectsty}
+  - \usepackage{paralist}
+  - \usepackage{setspace}\spacing{1.5}
+  - \usepackage{fancyhdr}
+  - \usepackage{lastpage}
+  - \usepackage{dcolumn}
+  - \usepackage[nottoc, numbib]{tocbibind}
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+```{r setup, include = FALSE}
+
+knitr::opts_chunk$set(message = FALSE,  warning = FALSE, 
+                      error = FALSE, out.width = "100%", echo = FALSE)
+
+library(knitr)
+```
+
+```{=tex}
+\allsectionsfont{\centering}
+\subsectionfont{\raggedright}
+\subsubsectionfont{\raggedright}
+```
+\pagenumbering{gobble}
+
+````{=tex}
+\begin{centering}
+
+\vspace{5cm}
+
+
+```{r, echo = F, out.width = "60%"}
+knitr::include_graphics("Image/CSE.png")
+```
+
+\vspace{2cm}
+
+\Large
+{American University of Armenia}
+
+\Large
+{\bf Akian College of Science and Engineering}
+
+\vspace{2cm}
+
+\Large
+
+\doublespacing
+{\bf Human Perception of \\
+Randomness in Number Generation}
+
+\vspace{2cm}
+
+\normalsize
+\Large
+
+\emph{Class Project Proposal\\
+IESM315: Design and Analysis of Experiments}
+
+\vspace{2 cm}
+
+\singlespacing
+Prepared by:
+
+\vspace{0.5 cm}
+
+{\bf Ani Gumruyan \& Irena Torosyan}
+
+\vspace{1.5 cm}
+
+\normalsize
+October 27, 2023
+
+\end{centering}
+````
+
+\newpage
+
+```{=tex}
+\pagenumbering{arabic}
+\newpage
+```
+```{=tex}
+\centering
+\raggedright
+```
+\newpage
+
+Humans often have difficulty generating truly random sequences of numbers.
+This project aims to explore the concept of randomness by examining whether people can produce random numbers under various conditions and if their background in statistics influences this ability.
+
+\vspace{0.7cm}
+
+[**Objectives**]{.underline}
+
+\- To understand if people can generate random numbers when asked without any conditions.
+
+\- To analyze the distribution of numbers provided when conditions are imposed (e.g., within a certain range, above or below a threshold).
+
+\- To determine if a person's background in statistics affects their ability to generate random numbers.
+
+\vspace{0.7cm}
+
+[**Data Collection**]{.underline}
+
+A diverse group of individuals will be selected.
+They will be categorized based on their statistical background (e.g., No background, Basic knowledge, Expert).
+
+Each participant will be asked to provide a sequence of numbers (e.g., 10 numbers) in a "random" fashion without any restrictions.
+The same participants will then be asked to provide a sequence of numbers within a certain range (e.g., between 1 and 50).
+Finally, participants will be prompted to generate numbers above or below a certain threshold (e.g., above 70).
+
+\vspace{0.7cm}
+
+[**Data Analysis**]{.underline}
+
+*Randomness Test*: Standard statistical tests for randomness, such as the runs test or chi-squared test, will be applied to determine if the sequences are random.
+
+*Distribution Analysis:* The sequences will be analyzed to see if any hidden distribution (e.g., normal, exponential) can be discerned from the data.
+
+*Group Comparison:* Differences in the ability to generate random numbers will be compared across groups based on statistics background using statistical tests (e.g., ANOVA).
