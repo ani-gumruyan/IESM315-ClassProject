@@ -3,7 +3,7 @@ title: ""
 output:
   pdf_document:
     number_sections: TRUE
-geometry: "left = 3cm, right = 3cm, top = 3cm, bottom = 3cm"
+geometry: "left = 2cm, right = 2cm, top = 3cm, bottom = 3cm"
 fontsize: 11pt
 header-includes:
   - \usepackage{float}
@@ -87,15 +87,9 @@ October 27, 2023
 
 \newpage
 
-```{=tex}
-\pagenumbering{arabic}
-\newpage
-```
-```{=tex}
-\centering
-\raggedright
-```
-\newpage
+**Human Perception of Randomness in Number Generation**
+
+\vspace{0.5cm}
 
 Humans often have difficulty generating truly random sequences of numbers.
 This project aims to explore the concept of randomness by examining whether people can produce random numbers under various conditions and if their background in statistics influences this ability.
