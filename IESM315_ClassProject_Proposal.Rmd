@@ -41,7 +41,7 @@ library(knitr)
 
 
 ```{r, echo = F, out.width = "60%"}
-knitr::include_graphics("Image/CSE.png")
+knitr::include_graphics("Images/CSE.png")
 ```
 
 \vspace{2cm}
