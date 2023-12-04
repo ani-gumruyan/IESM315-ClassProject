@@ -54,7 +54,7 @@ drop_outliers <- function(data, multiplier = 1.5) {
 # Data
 
 ```{r}
-data <- read.csv(file = "IESM315_CP_Data.csv")
+data <- read.csv(file = "Data/IESM315_CP_Data.csv")
 data <- subset(data, select = -9)
 head(data)
 ```
