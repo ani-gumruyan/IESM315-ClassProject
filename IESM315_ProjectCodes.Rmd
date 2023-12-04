@@ -1,0 +1,470 @@
+---
+title: ""
+output:
+  pdf_document:
+    number_sections: TRUE
+geometry: "left = 3cm, right = 3cm, top = 3cm, bottom = 3cm"
+fontsize: 12pt
+header-includes:
+  - \usepackage{float}
+  - \usepackage{sectsty}
+  - \usepackage{paralist}
+  - \usepackage{setspace}\spacing{1.5}
+  - \usepackage{fancyhdr}
+  - \usepackage{lastpage}
+  - \usepackage{dcolumn}
+  - \usepackage[nottoc, numbib]{tocbibind}
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(message = FALSE,  warning = FALSE, error = FALSE, 
+                      out.width = "100%")
+
+#install.packages("lawstat")
+library(lawstat)
+library(ggplot2)
+library(tidyverse)
+library(stats)
+```
+
+
+```{r}
+drop_outliers <- function(data, multiplier = 1.5) {
+  # Calculate the first and third quartiles
+  q1 <- quantile(data, 0.25)
+  q3 <- quantile(data, 0.75)
+  
+  # Calculate the interquartile range (IQR)
+  iqr <- q3 - q1
+  
+  # Define the lower and upper bounds to identify outliers
+  lower_bound <- q1 - multiplier * iqr
+  upper_bound <- q3 + multiplier * iqr
+  
+  # Drop outliers outside the defined range
+  filtered_data <- data[data >= lower_bound & data <= upper_bound]
+  
+  return(filtered_data)
+}
+```
+
+# Data
+
+```{r}
+data <- read.csv(file = "IESM315_CP_Data.csv")
+data <- subset(data, select = -9)
+head(data)
+```
+
+\newpage
+
+```{r}
+data$RandNoRestrictions <- lapply(strsplit(data$RandNoRestrictions, ", "), 
+                                  function(x) as.numeric(x))
+data$Rand1to50 <- lapply(strsplit(data$Rand1to50, ", "), 
+                         function(x) as.numeric(x))
+data$RandOver70 <- lapply(strsplit(data$RandOver70, ", "), 
+                          function(x) as.numeric(x))
+```
+
+```{r}
+# Combine all participant data into one vector for each condition
+numbers_no_restrictions <- unlist(data$RandNoRestrictions)
+numbers_1to50 <- unlist(data$Rand1to50)
+numbers_over70 <- unlist(data$RandOver70)
+```
+
+
+```{r}
+# Combine all participant data into one vector for each condition
+adj_numbers_no_restrictions <- drop_outliers(numbers_no_restrictions)
+adj_numbers_over70 <- drop_outliers(numbers_over70)
+
+# Summary statistics for each condition
+summary(adj_numbers_no_restrictions)
+summary(numbers_1to50)
+summary(adj_numbers_over70)
+```
+
+\newpage
+
+# Randomness
+
+## Runs Test
+
+```{r}
+runs_test_result_no_restrictions <- runs.test(adj_numbers_no_restrictions)
+print(runs_test_result_no_restrictions)
+```
+
+```{r}
+runs_test_result_1to50 <- runs.test(numbers_1to50)
+print(runs_test_result_1to50)
+```
+
+```{r}
+runs_test_result_above70 <- runs.test(adj_numbers_over70)
+print(runs_test_result_above70)
+```
+
+\newpage
+
+## Chi Squared Test
+
+```{r}
+observed_no_restriction <- table(adj_numbers_no_restrictions)
+
+# Perform Chi-Squared Test
+chi_squared_result_no_restriction <- chisq.test(observed_no_restriction)
+
+# Print the result
+print(chi_squared_result_no_restriction)
+```
+
+```{r}
+observed_1to50 <- table(numbers_1to50)
+
+# Perform Chi-Squared Test
+chi_squared_result_1to50 <- chisq.test(observed_1to50)
+
+# Print the result
+print(chi_squared_result_1to50)
+```
+
+```{r}
+observed_above70 <- table(numbers_over70)
+
+# Perform Chi-Squared Test
+chi_squared_result_above70 <- chisq.test(observed_above70)
+
+# Print the result
+print(chi_squared_result_above70)
+```
+
+\newpage
+
+# Density Distribution
+
+## Kolmogorov-Smirnov
+
+### No Restriction
+
+```{r}
+# Removing ties
+ks_data_no_res <- rank(adj_numbers_no_restrictions, ties.method = "random")
+```
+
+```{r}
+# Perform the Kolmogorov-Smirnov test for normal distribution
+ks_result_norm <- ks.test(ks_data_no_res, "pnorm", 
+                          mean = mean(ks_data_no_res), 
+                          sd = sd(ks_data_no_res))
+
+# Print the result
+print(ks_result_norm)
+```
+
+```{r}
+# Perform the Kolmogorov-Smirnov test for exponential distribution
+ks_result_exp <- ks.test(ks_data_no_res, "pexp", 
+                         rate = 1/mean(ks_data_no_res))
+
+# Print the result
+print(ks_result_exp)
+```
+
+```{r}
+# Perform the Kolmogorov-Smirnov test for Poisson distribution
+ks_result_pois <- ks.test(ks_data_no_res, "ppois", 
+                          lambda = mean(ks_data_no_res))
+
+# Print the result
+print(ks_result_pois)
+```
+
+```{r}
+ks_result_uniform <- ks.test(ks_data_no_res, "punif")
+
+# Print the test result
+print(ks_result_uniform)
+```
+
+\newpage
+
+### 1 to 50
+
+```{r}
+# Removing ties
+ks_data_1to50 <- rank(numbers_1to50, ties.method = "random")
+```
+
+```{r}
+# Perform the Kolmogorov-Smirnov test for normal distribution
+ks_result_norm <- ks.test(ks_data_1to50, "pnorm", 
+                          mean = mean(ks_data_1to50), 
+                          sd = sd(ks_data_1to50))
+
+# Print the result
+print(ks_result_norm)
+```
+
+```{r}
+# Perform the Kolmogorov-Smirnov test for exponential distribution
+ks_result_exp <- ks.test(ks_data_1to50, "pexp", 
+                         rate = 1/mean(ks_data_1to50))
+
+# Print the result
+print(ks_result_exp)
+```
+
+```{r}
+# Perform the Kolmogorov-Smirnov test for Poisson distribution
+ks_result_pois <- ks.test(ks_data_1to50, "ppois", 
+                          lambda = mean(ks_data_1to50))
+
+# Print the result
+print(ks_result_pois)
+```
+
+```{r}
+ks_result_uniform <- ks.test(ks_data_1to50, "punif")
+
+# Print the test result
+print(ks_result_uniform)
+```
+
+\newpage
+
+### Above 70
+
+```{r}
+# Removing ties
+ks_data_above70 <- rank(adj_numbers_over70, ties.method = "random")
+```
+
+```{r}
+# Perform the Kolmogorov-Smirnov test for normal distribution
+ks_result_norm <- ks.test(ks_data_above70, "pnorm", 
+                          mean = mean(ks_data_above70), 
+                          sd = sd(ks_data_above70))
+
+# Print the result
+print(ks_result_norm)
+```
+
+```{r}
+# Perform the Kolmogorov-Smirnov test for exponential distribution
+ks_result_exp <- ks.test(ks_data_above70, "pexp", 
+                         rate = 1/mean(ks_data_above70))
+
+# Print the result
+print(ks_result_exp)
+```
+
+```{r}
+# Perform the Kolmogorov-Smirnov test for Poisson distribution
+ks_result_pois <- ks.test(ks_data_above70, "ppois", 
+                          lambda = mean(ks_data_above70))
+
+# Print the result
+print(ks_result_pois)
+```
+
+```{r}
+ks_result_uniform <- ks.test(ks_data_above70, "punif")
+
+# Print the test result
+print(ks_result_uniform)
+```
+
+\newpage
+
+## Kernel Density Estimation (KDE)
+
+### No restriction
+
+```{r}
+# Create a density plot using ggplot2
+ggplot(data = data.frame(x = adj_numbers_no_restrictions), aes(x)) +
+  geom_density()
+```
+
+\newpage
+
+### 1 to 50
+
+```{r}
+# Create a density plot using ggplot2
+ggplot(data = data.frame(x = numbers_1to50), aes(x)) +
+  geom_density()
+```
+
+\newpage
+
+### Above 70
+
+```{r}
+# Create a density plot using ggplot2
+ggplot(data = data.frame(x = adj_numbers_over70), aes(x)) +
+  geom_density() 
+```
+
+\newpage
+
+# Group Comparisons
+
+## ANOVA
+
+```{r}
+data$StatBackground <- as.factor(data$StatBackground)
+
+# Check the lengths of vectors in each list column
+expanded_data <- data %>%
+  unnest(c(RandNoRestrictions, Rand1to50, RandOver70))
+
+head(expanded_data)
+```
+
+\newpage
+
+
+
+```{r}
+new_drop_outliers <- function(data, multiplier = 1.5) {
+  # Calculate the first and third quartiles
+  q1 <- quantile(data, 0.25)
+  q3 <- quantile(data, 0.75)
+  
+  # Calculate the interquartile range (IQR)
+  iqr <- q3 - q1
+  
+  # Define the lower and upper bounds to identify outliers
+  lower_bound <- q1 - multiplier * iqr
+  upper_bound <- q3 + multiplier * iqr
+  
+  # Replace outliers outside the defined range with NA
+  filtered_data <- replace(data, data < lower_bound | data > upper_bound, NA)
+  
+  return(filtered_data)
+}
+```
+
+
+```{r}
+data_NR <- subset(expanded_data, select = c(2,3))
+
+# Apply the new_drop_outliers function to the RandNoRestrictions column
+data_NR <- data_NR %>%
+  mutate(RandNoRestrictions = new_drop_outliers(RandNoRestrictions)) %>% 
+  na.omit()
+
+head(data_NR)
+```
+
+```{r}
+data_1to50 <- subset(expanded_data, select = c(2,4))
+
+# Apply the new_drop_outliers function to the Rand1to50 column
+data_1to50 <- data_1to50 %>%
+  mutate(Rand1to50 = new_drop_outliers(Rand1to50)) %>% 
+  na.omit()
+
+head(data_1to50)
+```
+
+```{r}
+data_over70 <- subset(expanded_data, select = c(2,5))
+
+# Apply the new_drop_outliers function to the RandOver70 column
+data_over70 <- data_over70 %>%
+  mutate(RandOver70 = new_drop_outliers(RandOver70)) %>% 
+  na.omit()
+
+head(data_over70)
+```
+
+
+### No Restriction
+
+```{r}
+anova_result_no_restriction <- aov(RandNoRestrictions ~ StatBackground, 
+                                   data = data_NR)
+summary(anova_result_no_restriction)
+```
+
+### 1 to 50
+
+```{r}
+anova_result_1to50 <- aov(Rand1to50 ~ StatBackground, data = data_1to50)
+summary(anova_result_1to50)
+```
+
+### Above 70
+
+```{r}
+anova_result_above70 <- aov(RandOver70 ~ StatBackground, data = data_over70)
+summary(anova_result_above70)
+```
+
+\newpage
+
+## T-Tests
+
+### No Restriction
+
+```{r}
+pairwise_tukey_no_restriction <- TukeyHSD(anova_result_no_restriction)
+print(pairwise_tukey_no_restriction)
+```
+
+\newpage
+
+### 1 to 50
+
+```{r}
+pairwise_tukey_1to50 <- TukeyHSD(anova_result_1to50)
+print(pairwise_tukey_1to50)
+```
+
+\newpage
+
+### Above 70
+
+```{r}
+pairwise_tukey_above70 <- TukeyHSD(anova_result_above70)
+print(pairwise_tukey_above70)
+```
+
+## Spearman’s Rank Correlation
+
+```{r}
+# Assuming your data frame is named data
+data$StatBackground <- factor(data$StatBackground, levels = c("No background", "Basic knowledge", "Moderate knowledge", "Expert"), ordered = TRUE)
+
+# Convert ordered factor to numeric based on the order
+data$StatBackground <- as.numeric(data$StatBackground)
+
+# Perform Spearman's Rank Correlation for each pair
+cor_test_no_restrictions <- cor.test(data$StatBackground, 
+                data$AssessmentRandNoRestrictions, method = "spearman")
+cor_test_1to50 <- cor.test(data$StatBackground, data$AssessmentRand1to50, 
+                           method = "spearman")
+cor_test_over70 <- cor.test(data$StatBackground, data$AssessmentRandOver70, 
+                            method = "spearman")
+
+# Print the results
+print("Spearman's Rank Correlation for AssessmentRandNoRestrictions:")
+print(cor_test_no_restrictions)
+
+print("Spearman's Rank Correlation for AssessmentRand1to50:")
+print(cor_test_1to50)
+
+print("Spearman's Rank Correlation for AssessmentRandOver70:")
+print(cor_test_over70)
+
+```
+
+
