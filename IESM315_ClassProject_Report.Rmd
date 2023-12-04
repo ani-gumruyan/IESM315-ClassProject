@@ -1,0 +1,98 @@
+---
+title: ""
+output:
+  pdf_document:
+    number_sections: TRUE
+geometry: "left = 3cm, right = 3cm, top = 3cm, bottom = 3cm"
+fontsize: 11pt
+header-includes:
+  - \usepackage{float}
+  - \usepackage{sectsty}
+  - \usepackage{paralist}
+  - \usepackage{setspace}\spacing{1.5}
+  - \usepackage{fancyhdr}
+  - \usepackage{lastpage}
+  - \usepackage{dcolumn}
+  - \usepackage[nottoc, numbib]{tocbibind}
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+```{r setup, include = FALSE}
+
+knitr::opts_chunk$set(message = FALSE,  warning = FALSE, 
+                      error = FALSE, out.width = "100%", echo = FALSE)
+
+library(knitr)
+```
+
+
+\allsectionsfont{\centering}
+\subsectionfont{\raggedright}
+\subsubsectionfont{\raggedright}
+
+\pagenumbering{gobble}
+
+\begin{centering}
+
+\vspace{5cm}
+
+
+```{r, echo = F, out.width = "60%"}
+knitr::include_graphics("Images/CSE.png")
+```
+
+\vspace{2cm}
+
+\Large
+American University of Armenia
+
+\Large
+Akian College of Science and Engineering
+
+\vspace{2cm}
+
+\Large
+
+\doublespacing
+{\bf HUMAN PERCEPTION OF \\ RANDOMNESS IN NUMBER GENERATION}
+
+\vspace{2cm}
+
+\normalsize
+\singlespacing
+Prepared by:
+
+\vspace{0.5 cm}
+
+\Large
+
+{\bf A. Gumruyan | I. Torosyan}
+
+\vspace{2 cm}
+
+\emph{In fulfillment of the requirement for the degree of BS in Data Science \\
+Within the scope of the class project for the course\\
+IESM315: Design and Analysis of Experiments}
+
+
+\vspace{1.5 cm}
+
+\normalsize
+December 8, 2022
+
+\end{centering}
+
+\newpage
+
+
+\pagenumbering{arabic}
+\newpage
+
+\centering
+\raggedright
+
+\newpage
+\tableofcontents
+\newpage
