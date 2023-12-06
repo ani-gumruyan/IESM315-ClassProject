@@ -35,7 +35,7 @@ library(patchwork)
 ```
 
 
-```{r}
+```{r Functions}
 drop_outliers <- function(data, multiplier = 1.5) {
   # Calculate the first and third quartiles
   q1 <- quantile(data, 0.25)
@@ -109,7 +109,7 @@ expanded_data <- data %>%
 
 
 ```{r}
-data %>%
+ed_plot <- data %>%
   group_by(Education) %>%
   summarise(count = n()) %>%
   ggplot(aes(x = Education, y = count, fill = Education)) +
@@ -123,6 +123,23 @@ data %>%
       panel.spacing.y = unit(1, 'line'), 
       panel.spacing.x = unit(1, 'line')) +
   scale_fill_manual(values = colorRampPalette(brewer.pal(n = 11, "PRGn"))(4))
+
+stat_plot <- data %>%
+  group_by(StatBackground) %>%
+  summarise(count = n()) %>%
+  ggplot(aes(x = StatBackground, y = count, fill = StatBackground)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Statistics Background") + 
+  theme_fivethirtyeight() +
+  theme(plot.title = element_text(face = 'bold', size = 15, hjust = 0.5),
+      legend.position = 'none',
+      legend.title = element_text(size = 10, face = 'bold'),
+      panel.grid = element_line(linetype = 2),
+      panel.spacing.y = unit(1, 'line'), 
+      panel.spacing.x = unit(1, 'line')) +
+  scale_fill_manual(values = colorRampPalette(brewer.pal(n = 11, "PRGn"))(4))
+
+ed_plot / stat_plot
 ```
 
 ```{r}
@@ -239,18 +256,11 @@ histogram_nr / histogram_1to50 / histogram_over70
 numbers_no_restrictions <- unlist(data$RandNoRestrictions)
 numbers_1to50 <- unlist(data$Rand1to50)
 numbers_over70 <- unlist(data$RandOver70)
-```
-
-```{r}
 # Combine all participant data into one vector for each condition
 adj_numbers_no_restrictions <- drop_outliers(numbers_no_restrictions)
 adj_numbers_over70 <- drop_outliers(numbers_over70)
-
-# Summary statistics for each condition
-summary(adj_numbers_no_restrictions)
-summary(numbers_1to50)
-summary(adj_numbers_over70)
 ```
+
 
 \newpage
 
@@ -443,54 +453,45 @@ ks_result_uniform <- ks.test(ks_data_above70, "punif")
 print(ks_result_uniform)
 ```
 
+
 \newpage
 
-## Kernel Density Estimation (KDE)
+## Kernel Density Visualization
 
-### No restriction
-
-```{r}
+```{r fig.height= 8}
 # Create a density plot using ggplot2
-ggplot(data = data.frame(x = adj_numbers_no_restrictions), aes(x)) +
+density_nr <- ggplot(data = data.frame(x = adj_numbers_no_restrictions), aes(x)) +
   geom_density(color = colorRampPalette(brewer.pal(n = 11, "PRGn"))(3)[1]) +
-  labs(x = '', y = '') +
+  labs(title = "Smoothed Density Curve of Random Numbers with No Restrictions",
+       x = '', y = '') +
   theme_fivethirtyeight() +
   theme(plot.title = element_text(face = 'bold', size = 10, hjust = 0.5),
       panel.grid = element_line(linetype = 2),
       panel.spacing.y = unit(1, 'line'), 
       panel.spacing.x = unit(1, 'line'))
-```
 
-\newpage
-
-### 1 to 50
-
-```{r}
-# Create a density plot using ggplot2
-ggplot(data = data.frame(x = numbers_1to50), aes(x)) +
+density_1to50 <- ggplot(data = data.frame(x = numbers_1to50), aes(x)) +
   geom_density(color = colorRampPalette(brewer.pal(n = 11, "PRGn"))(3)[1]) +
-  labs(x = '', y = '') +
+  labs(title = "Smoothed Density Curve of Random Numbers from 1 to 50",
+       x = '', y = '') +
   theme_fivethirtyeight() +
   theme(plot.title = element_text(face = 'bold', size = 10, hjust = 0.5),
       panel.grid = element_line(linetype = 2),
       panel.spacing.y = unit(1, 'line'), 
       panel.spacing.x = unit(1, 'line'))
-```
 
-\newpage
-
-### Above 70
-
-```{r}
-# Create a density plot using ggplot2
-ggplot(data = data.frame(x = adj_numbers_over70), aes(x)) +
+density_over70 <- ggplot(data = data.frame(x = adj_numbers_over70), aes(x)) +
   geom_density(color = colorRampPalette(brewer.pal(n = 11, "PRGn"))(3)[1]) +
-  labs(x = '', y = '') +
+  labs(title = "Smoothed Density Curve of Random Numbers Above 70",
+       x = '', y = '') +
   theme_fivethirtyeight() +
   theme(plot.title = element_text(face = 'bold', size = 10, hjust = 0.5),
       panel.grid = element_line(linetype = 2),
       panel.spacing.y = unit(1, 'line'), 
       panel.spacing.x = unit(1, 'line'))
+
+# Arrange the histograms vertically
+density_nr / density_1to50 / density_over70
 ```
 
 \newpage
@@ -524,7 +525,7 @@ summary(anova_result_above70)
 
 \newpage
 
-## T-Tests
+## Tukey T-Test
 
 ### No Restriction
 
@@ -579,5 +580,8 @@ print("Spearman's Rank Correlation for AssessmentRandOver70:")
 print(cor_test_over70)
 
 ```
+
+
+
 
 
